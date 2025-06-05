@@ -191,20 +191,6 @@
           alert("Result copied to clipboard!");
         });
       }
-      </script>
-
-    <script>
-      Telegram.WebApp.ready();
-      Telegram.WebApp.MainButton.setText("Send Result");
-      Telegram.WebApp.MainButton.show();
-
-      Telegram.WebApp.MainButton.onClick(function () {
-        const result = document.getElementById("result").innerText;
-        Telegram.WebApp.sendData(result);
-      });
-    </script>
-  </body>
-</html>
     </script>
   </body>
 </html>
