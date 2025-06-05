@@ -4,21 +4,193 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>EmoCheck</title>
-    <link rel="stylesheet" href="/style.css" />
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
+        color: #222;
+        padding: 20px;
+        text-align: center;
+        animation: fadeIn 1.2s ease-in;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      h1 {
+        color: #8e44ad;
+        font-size: 28px;
+        margin-bottom: 15px;
+        text-shadow: 1px 1px 2px #dcdcdc;
+        position: relative;
+      }
+
+      h1::before,
+      h1::after {
+        content: "❁";
+        font-size: 18px;
+        margin: 0 10px;
+        color: #c0392b;
+        animation: spin 4s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      textarea {
+        width: 90%;
+        height: 100px;
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 12px;
+        border: 1px solid #ccc;
+        margin-top: 10px;
+        background-color: #fffdf7;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      }
+
+      button {
+        background-color: #ff6b6b;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: bold;
+        margin-top: 15px;
+        transition: all 0.3s ease;
+      }
+
+      button:hover {
+        background-color: #e74c3c;
+        transform: scale(1.05);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      #result {
+        margin-top: 20px;
+        font-size: 18px;
+        color: #34495e;
+      }
+
+      canvas {
+        margin-top: 25px;
+        max-width: 90%;
+        animation: fadeIn 0.8s ease-in;
+      }
+    </style>
   </head>
   <body>
     <h1>Welcome to EmoCheck</h1>
     <p id="user-info"></p>
 
-    <textarea id="message-input" placeholder="Paste your message here..."></textarea>
+    <textarea
+      id="message-input"
+      placeholder="Paste your message here..."
+    ></textarea>
     <button onclick="analyzeEmotion()">Analyze Emotion</button>
 
     <div id="result"></div>
     <canvas id="emotionChart" width="400" height="400"></canvas>
     <button onclick="copyResult()">Copy Result</button>
 
-    <script src="script.js"></script>
+    <script>
+      async function analyzeEmotion() {
+        const input = document.getElementById("message-input").value;
+        const resultDiv = document.getElementById("result");
+
+        if (!input.trim()) {
+          resultDiv.innerText = "Please enter a message to analyze.";
+          return;
+        }
+
+        resultDiv.innerText = "Analyzing...";
+
+        const response = await fetch(
+          "https://api-inference.huggingface.co/models/j-hartmann/emotion-english-distilroberta-base",
+          {
+            method: "POST",
+            headers: {
+              Authorization: "Bearer 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",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ inputs: input }),
+          }
+        );
+
+        const data = await response.json();
+
+        try {
+          const emotions = data[0];
+          const labels = emotions.map((e) => e.label);
+          const scores = emotions.map((e) =>
+            (e.score * 100).toFixed(2)
+          );
+
+          resultDiv.innerHTML = `Top Emotion: <b>${labels[0]}</b>`;
+
+          const ctx = document.getElementById("emotionChart").getContext("2d");
+          if (window.emotionChartInstance) {
+            window.emotionChartInstance.destroy();
+          }
+
+          window.emotionChartInstance = new Chart(ctx, {
+            type: "bar",
+            data: {
+              labels: labels,
+              datasets: [
+                {
+                  label: "Emotion Confidence (%)",
+                  data: scores,
+                  backgroundColor: [
+                    "#f94144",
+                    "#f3722c",
+                    "#f8961e",
+                    "#43aa8b",
+                    "#577590",
+                    "#277da1",
+                  ],
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  max: 100,
+                },
+              },
+            },
+          });
+        } catch (err) {
+          resultDiv.innerText = "Error analyzing emotion.";
+          console.error(err);
+        }
+      }
+
+      function copyResult() {
+        const text = document.getElementById("result").innerText;
+        navigator.clipboard.writeText(text).then(() => {
+          alert("Result copied to clipboard!");
+        });
+      }
+    </script>
   </body>
 </html>
