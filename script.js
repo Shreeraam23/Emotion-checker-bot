@@ -14,7 +14,7 @@ async function analyzeEmotion() {
     {
       method: "POST",
       headers: {
-        Authorization: "Bearer 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", // Better to store in serverless function
+        Authorization: "Bearer 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",
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ inputs: input }),
@@ -65,6 +65,15 @@ async function analyzeEmotion() {
         },
       },
     });
+
+    // Enable Telegram MainButton with result
+    Telegram.WebApp.MainButton.setText("📤 Send to Bot");
+    Telegram.WebApp.MainButton.show();
+    Telegram.WebApp.MainButton.onClick(() => {
+      const text = `Top Emotion: ${labels[0]}\n\nFull Analysis:\n` + labels.map((l, i) => `${l}: ${scores[i]}%`).join("\n");
+      Telegram.WebApp.sendData(text); // sends data to bot
+    });
+
   } catch (err) {
     resultDiv.innerText = "Error analyzing emotion.";
     console.error(err);
@@ -78,11 +87,8 @@ function copyResult() {
   });
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-  const tg = window.Telegram.WebApp;
-  tg.ready();
-  const user = tg.initDataUnsafe?.user;
-  if (user) {
-    document.getElementById("user-info").innerText = `Hello, ${user.first_name}`;
-  }
-});
+// Initialize Telegram WebApp
+if (window.Telegram && Telegram.WebApp) {
+  Telegram.WebApp.ready();
+  Telegram.WebApp.expand(); // optional: expands full screen
+}
