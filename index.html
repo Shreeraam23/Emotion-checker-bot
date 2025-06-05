@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EmoCheck</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <h1>Welcome to EmoCheck</h1>
+    <p id="user-info"></p>
+
+    <textarea id="message-input" placeholder="Paste your message here..."></textarea>
+    <button onclick="analyzeEmotion()">Analyze Emotion</button>
+
+    <div id="result"></div>
+    <canvas id="emotionChart" width="400" height="400"></canvas>
+    <button onclick="copyResult()">Copy Result</button>
+
+    <script src="script.js"></script>
+  </body>
+</html>
