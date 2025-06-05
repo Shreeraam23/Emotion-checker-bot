@@ -1,0 +1,87 @@
+body {
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
+  color: #222;
+  padding: 20px;
+  text-align: center;
+  animation: fadeIn 1.2s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+h1 {
+  color: #8e44ad;
+  font-size: 28px;
+  margin-bottom: 15px;
+  text-shadow: 1px 1px 2px #dcdcdc;
+  position: relative;
+}
+
+h1::before,
+h1::after {
+  content: "❁";
+  font-size: 18px;
+  margin: 0 10px;
+  color: #c0392b;
+  animation: spin 4s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+textarea {
+  width: 90%;
+  height: 100px;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  margin-top: 10px;
+  background-color: #fffdf7;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+button {
+  background-color: #ff6b6b;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 15px;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: #e74c3c;
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+#result {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #34495e;
+}
+
+canvas {
+  margin-top: 25px;
+  max-width: 90%;
+  animation: fadeIn 0.8s ease-in;
+}
